@@ -222,4 +222,14 @@
     <Message Text="📁 Location: $(OutputPath)FKS.dll" Importance="high" />
   </Target>
 
+  <!-- Link shared JSON schemas (from git submodule) into build output for runtime validation -->
+  <ItemGroup>
+    <None Include="..\shared\schema\trade_signal.schema.json" Link="Schemas\trade_signal.schema.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- Include generated / hand-written DTOs for shared schemas -->
+  <ItemGroup>
+    <Compile Include="Schema\*.cs" />
+  </ItemGroup>
+
 </Project>
