@@ -1,0 +1,15 @@
+[submodule "shared/react"]
+	path = shared/react
+	url = https://github.com/nuniesmith/shared-react.git
+[submodule "shared/schema"]
+	path = shared/schema
+	url = https://github.com/nuniesmith/shared-schema.git
+[submodule "shared/python"]
+	path = shared/python
+	url = https://github.com/nuniesmith/shared-python.git
+[submodule "shared/rust"]
+	path = shared/rust
+	url = https://github.com/nuniesmith/shared-rust.git
+[submodule "shared/scripts"]
+	path = shared/scripts
+	url = https://github.com/nuniesmith/shared-scripts.git
