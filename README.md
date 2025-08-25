@@ -2,7 +2,7 @@
 
 ## 🎯 **System Overview**
 
-FKS (Futures Kingdom Signals) is a professional-grade algorithmic trading platform that combines AI-enhanced signals with traditional technical analysis for futures markets. The system features a bulletproof NinjaTrader 8 implementation with comprehensive Python tools and cross-platform development environment.
+FKS (Freddy Krueger Sniper) is a professional-grade algorithmic trading platform that combines AI-enhanced signals with traditional technical analysis for futures markets. The system features a bulletproof NinjaTrader 8 implementation with comprehensive Python tools and cross-platform development environment.
 
 ### **Key Features:**
 - **🤖 AI-Enhanced Signals**: Advanced pattern recognition with quality scoring (60-95% confidence)
@@ -129,7 +129,7 @@ FKS Trading Systems/
 │   ├── fks_strategy.py              # Strategy implementation
 │   ├── fks_ao.py                    # AO indicator
 │   ├── fks_api.py                   # FastAPI server
-│   ├── fks-python-bridge.py         # NT bridge
+│   ├── fks_python-bridge.py         # NT bridge
 │   ├── requirements.txt             # Dependencies
 │   └── README.md                    # Python documentation
 ├── web/                             # React web interface
@@ -335,3 +335,68 @@ cd python && python test_fks_strategy.py
 - **Account Protection**: System includes multiple safety mechanisms
 
 **Remember: Trust the signals, but always maintain trading discipline and risk awareness.**
+
+---
+
+## 📦 Docker Artifact Usage (External Build / Packaging)
+
+The repository now ships a multi-stage Dockerfile that produces a portable tarball (`fks_ninja_package.tgz`) containing:
+
+- `FKS.dll` (compiled with Mono for net48)  
+- All AddOn / Indicator / Strategy source files (left uncompiled for NinjaTrader to compile natively)  
+- `manifest.xml` and ancillary metadata
+
+### Build All Stages
+
+```bash
+# From repo root (fks_ninja)
+docker build -t fks_ninja:artifact .
+```
+
+### Extract Package Tarball
+
+```bash
+CID=$(docker create fks_ninja:artifact)
+docker cp "$CID:/fks_ninja_package.tgz" .
+docker rm -v "$CID"
+sha256sum fks_ninja_package.tgz
+tar -tzf fks_ninja_package.tgz | head
+```
+
+### Import Into NinjaTrader 8
+
+1. Copy `fks_ninja_package.tgz` to your workstation.  
+2. (Optional) Rename to `FKS_TradingSystem_v1.0.0.tgz` for version clarity.  
+3. Extract the tarball; place `FKS.dll` plus the `bin/Custom/...` source tree into your NinjaTrader `Documents/NinjaTrader 8/bin/Custom/` folder (or import via a ZIP you create containing that structure).  
+4. Restart NinjaTrader and verify `FKS` appears under Indicators / Strategies.  
+
+### Using docker-compose (Dev)
+
+```bash
+# Build dev + artifact services
+docker compose -f docker-compose.dev.yml up -d --build
+# Copy out tarball from artifact container
+docker cp $(docker ps --filter ancestor=fks_ninja:artifact -q | head -n1):/fks_ninja_package.tgz ./
+```
+
+### Helper Script
+
+See `scripts/extract_ninja_package.sh` (added) for an automated extraction workflow with checksum validation.
+
+> Note: Build warning MSB3277 (System.Text.Json version conflict between Mono-resolved package and NinjaTrader reference shim) is intentionally suppressed in this external build. The DLL is compiled with compile-time reference only (`ExcludeAssets=runtime`), allowing NinjaTrader to load its own runtime assembly without duplication.
+
+### Create Importable ZIP
+
+Once you have `fks_ninja_package.tgz` you can generate a NinjaTrader 8 import ZIP:
+
+```bash
+./scripts/package_zip_from_tar.sh  # creates FKS_TradingSystem_v1.0.0.zip
+```
+
+If you need a different version tag:
+
+```bash
+FKS_VERSION=1.1.0 ./scripts/package_zip_from_tar.sh
+```
+
+Resulting ZIP includes `FKS.dll` at root plus `bin/Custom/Indicators` & `bin/Custom/Strategies` sources for NT8 compile/import.

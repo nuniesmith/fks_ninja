@@ -31,7 +31,7 @@ This package contains the complete FKS Trading Systems with AI-enhanced signals,
 
 1. **Open NinjaTrader 8**
 2. **Go to Tools → Import → NinjaScript Add-On...**
-3. **Browse and select** the `fks-trading-system-v1.0.0.zip` file
+3. **Browse and select** the `fks_trading-system-v1.0.0.zip` file
 4. **Click Import**
 5. **Restart NinjaTrader 8** when prompted
 

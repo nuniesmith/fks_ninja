@@ -144,7 +144,7 @@
     <PropertyGroup>
       <PackageDir>../packages</PackageDir>
       <PackageVersion>1.0.0</PackageVersion>
-      <PackageName>fks-trading-system-v$(PackageVersion)</PackageName>
+      <PackageName>fks_trading-system-v$(PackageVersion)</PackageName>
     </PropertyGroup>
 
     <MakeDir Directories="$(PackageDir)/temp/bin/Custom/Indicators" />

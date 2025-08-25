@@ -19,7 +19,7 @@ using NinjaTrader.Data;
 using NinjaTrader.NinjaScript;
 using NinjaTrader.Core.FloatingPoint;
 using NinjaTrader.NinjaScript.Indicators;
-using NinjaTrader.NinjaScript.Indicators.FKS;
+// Removed using NinjaTrader.NinjaScript.Indicators.FKS to avoid ambiguous type resolution; explicit namespace qualifiers used below.
 using NinjaTrader.NinjaScript.AddOns.FKS;
 #endregion
 
@@ -81,10 +81,10 @@ namespace NinjaTrader.NinjaScript.Strategies.FKS
         private double globalVolumeThreshold = DEFAULT_VOLUME_THRESHOLD;
         
         // FKS Indicators - will be instantiated in DataLoaded
-        private FKS_AI fksAI;
-        private FKS_AO fksAO;
-        private FKS_AI fksVWAP;
-        private Indicators.FKS.FKS_Dashboard fksInfo;
+    private NinjaTrader.NinjaScript.Indicators.FKS.FKS_AI fksAI;
+    private NinjaTrader.NinjaScript.Indicators.FKS.FKS_AO fksAO;
+    private NinjaTrader.NinjaScript.Indicators.FKS.FKS_AI fksVWAP;
+    private NinjaTrader.NinjaScript.Indicators.FKS.FKS_Dashboard fksInfo;
         
         // Standard Indicators
         private EMA ema9;
@@ -1686,9 +1686,9 @@ namespace NinjaTrader.NinjaScript.Strategies.FKS
                         
                         // Initialize FKS indicators
                         // FKS_AI requires parameters: assetType, showSRBands, showSignalLabels, showEntryZones, showWaveInfo, showMarketPhase, cleanChartMode
-                        fksAI = new FKS_AI();
-                        fksAO = new FKS_AO();
-fksVWAP = new FKS_AI();
+                        fksAI = new NinjaTrader.NinjaScript.Indicators.FKS.FKS_AI();
+                        fksAO = new NinjaTrader.NinjaScript.Indicators.FKS.FKS_AO();
+                        fksVWAP = new NinjaTrader.NinjaScript.Indicators.FKS.FKS_AI();
 
                         // Add them to the chart if needed
                         AddChartIndicator(fksAI);

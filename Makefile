@@ -4,8 +4,8 @@
 PROJECT_NAME = FKS
 BUILD_DIR = build
 OUTPUT_DIR = $(BUILD_DIR)/output
-DOCKER_IMAGE = fks-ninjatrader
-PYTHON_SCRIPT = fks-monitor-script.py
+DOCKER_IMAGE = fks_ninjatrader
+PYTHON_SCRIPT = fks_monitor-script.py
 
 # Colors
 GREEN = \033[0;32m

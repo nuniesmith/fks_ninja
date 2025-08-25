@@ -5,7 +5,7 @@
     <OutputType>Library</OutputType>
     <AssemblyName>FKS</AssemblyName>
     <RootNamespace>NinjaTrader.NinjaScript</RootNamespace>
-    <LangVersion>7.3</LangVersion>
+  <LangVersion>latest</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <OutputPath>../bin/$(Configuration)/</OutputPath>
@@ -14,8 +14,8 @@
     <!-- Project GUID for consistency -->
     <ProjectGuid>{44387377-FCA2-495F-89D1-B7965E67142F}</ProjectGuid>
 
-    <!-- Disable warnings about missing XML documentation -->
-    <NoWarn>1591</NoWarn>
+  <!-- Disable warnings about missing XML documentation and suppress System.Text.Json conflict (MSB3277) coming from mixed assembly versions in Mono vs NinjaTrader references -->
+  <NoWarn>1591;MSB3277</NoWarn>
 
     <!-- Enable unsafe code if needed for performance optimizations -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -59,6 +59,20 @@
   <!-- Note: All files are now included by default EnableDefaultCompileItems setting -->
   <!-- The SDK automatically includes all .cs files, so we don't need explicit includes -->
   <!-- This includes: FKS_NeuralNetwork.cs, FKS_TensorFlowWrapper.cs, FKS_VWAP.cs and all other FKS files -->
+
+  <!-- Exclude NinjaTrader script source files (Indicators/Strategies) from external build.
+       They rely on NinjaTrader's runtime code-gen and cannot be compiled cleanly under msbuild/mono.
+       We still package the raw .cs files so the NT8 platform can compile them on import. -->
+  <ItemGroup>
+    <Compile Remove="Indicators/*.cs" />
+    <Compile Remove="Strategies/*.cs" />
+  </ItemGroup>
+
+  <!-- Re-include excluded script sources as content (None) so PackageNT8 target can copy them -->
+  <ItemGroup>
+    <None Include="Indicators/*.cs" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Strategies/*.cs" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 
   <!-- NinjaTrader References (using relative paths from src/ directory) -->
   <ItemGroup>
@@ -121,6 +135,11 @@
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0">
+      <Private>false</Private>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  <!-- Use 9.0.0 to align with NinjaTrader core assemblies (avoid cross-major assembly conflict). Exclude runtime so NT8 provides its own copy. -->
+  <PackageReference Include="System.Text.Json" Version="9.0.0">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
@@ -222,14 +241,12 @@
     <Message Text="📁 Location: $(OutputPath)FKS.dll" Importance="high" />
   </Target>
 
-  <!-- Link shared JSON schemas (from git submodule) into build output for runtime validation -->
+  <!-- Link shared JSON schemas (conditionally) if repository shared path exists -->
   <ItemGroup>
-    <None Include="..\shared\schema\trade_signal.schema.json" Link="Schemas\trade_signal.schema.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../shared/shared_schema/trade_signal.schema.json" Link="Schemas/trade_signal.schema.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('../../shared/shared_schema/trade_signal.schema.json')" />
   </ItemGroup>
 
   <!-- Include generated / hand-written DTOs for shared schemas -->
-  <ItemGroup>
-    <Compile Include="Schema\*.cs" />
-  </ItemGroup>
+  <!-- Removed explicit Schema Compile includes to avoid duplicate 'Compile' items; default SDK include already handles Schema/*.cs -->
 
 </Project>

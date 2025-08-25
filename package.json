@@ -1,5 +1,5 @@
 {
-  "name": "fks-development-services",
+  "name": "fks_development-services",
   "version": "1.0.0",
   "description": "Development services for FKS NinjaTrader project",
   "main": "vscode-proxy.js",
