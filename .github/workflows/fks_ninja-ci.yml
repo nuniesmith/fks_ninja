@@ -6,26 +6,22 @@ concurrency:
 
 on:
   push:
-    branches: [ main ]
     paths:
       - 'src/**'
       - 'single_files/**'
       - 'scripts/**'
       - 'FKS.sln'
       - 'build.xml'
-      - 'Dockerfile'
-      - 'Dockerfile.simple'
+      - 'Dockerfile*'
       - '.github/workflows/fks_ninja-ci.yml'
   pull_request:
-    branches: [ main ]
     paths:
       - 'src/**'
       - 'single_files/**'
       - 'scripts/**'
       - 'FKS.sln'
       - 'build.xml'
-      - 'Dockerfile'
-      - 'Dockerfile.simple'
+      - 'Dockerfile*'
       - '.github/workflows/fks_ninja-ci.yml'
   workflow_dispatch: {}
 
@@ -93,9 +89,9 @@ jobs:
         with:
           images: local/fks
           tags: |
-            type=ref,event=branch,prefix=${{ env.SERVICE_SLUG }}-
-            type=sha,prefix=${{ env.SERVICE_SLUG }}-
-            type=raw,value=${{ env.SERVICE_SLUG }}-latest
+            type=ref,event=branch,prefix=ninja-
+            type=sha,prefix=ninja-
+            type=raw,value=ninja-latest
 
       - name: Build image (no push)
         uses: docker/build-push-action@v5

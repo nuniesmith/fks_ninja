@@ -2,14 +2,28 @@ services:
   fks_ninja:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: shared/shared_docker/templates/dotnet.Dockerfile
+    working_dir: /app
+    environment:
+      TZ: America/Toronto
+      SERVICE_PORT: 4900
+      ASPNETCORE_ENVIRONMENT: Development
+      DOTNET_ENVIRONMENT: Development
+    ports:
+      - "4900:4900"
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - ./logs:/app/logs
+      - ./bin:/app/bin
+      - ./packages:/app/packages
     networks: [fks_net]
     healthcheck:
-      test: ["CMD-SHELL", "dotnet --info >/dev/null 2>&1 || exit 1"]
-      interval: 60s
+      test: ["CMD-SHELL", "curl -f http://localhost:4900/health || dotnet --info >/dev/null 2>&1 || exit 1"]
+      interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 30s
 
 networks:
   fks_net:
