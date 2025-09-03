@@ -28,3 +28,4 @@ services:
 networks:
   fks_net:
     name: fks_net
+    external: true
