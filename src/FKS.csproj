@@ -243,7 +243,7 @@
 
   <!-- Link shared JSON schemas (conditionally) if repository shared path exists -->
   <ItemGroup>
-    <None Include="../../shared/shared_schema/trade_signal.schema.json" Link="Schemas/trade_signal.schema.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('../../shared/shared_schema/trade_signal.schema.json')" />
+    <None Include="../../shared/schema/trade_signal.schema.json" Link="Schemas/trade_signal.schema.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('../../shared/schema/trade_signal.schema.json')" />
   </ItemGroup>
 
   <!-- Include generated / hand-written DTOs for shared schemas -->
