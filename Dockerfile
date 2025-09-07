@@ -5,15 +5,17 @@ FROM shared/dotnet:9.0 AS build
 
 WORKDIR /src
 
-# Copy solution and project files for dependency caching
+# Copy solution and project files for dependency caching (project file lives directly under src/)
 COPY *.sln global.json* nuget.config* ./
-COPY src/*/*.csproj ./
+RUN mkdir -p src
+COPY src/*.csproj ./src/
 RUN dotnet restore --verbosity minimal
 
-# Copy source code and build
+# Copy full source and references then build (library project FKS.csproj)
 COPY src ./src
+COPY references ./references
 RUN --mount=type=cache,target=/root/.nuget/packages \
-    dotnet publish src/FKSNinja -c Release -o /app/publish \
+    dotnet build src/FKS.csproj -c Release -o /app/publish \
     --no-restore --verbosity minimal
 
 # Runtime stage - using ASP.NET runtime
@@ -50,4 +52,5 @@ RUN groupadd --gid ${USER_ID} appuser \
 
 USER appuser
 
-ENTRYPOINT ["dotnet", "FKSNinja.dll"]
+# Library project (no executable). Keep container alive for artifact access.
+ENTRYPOINT ["/bin/bash", "-c", "echo 'FKS build image (library) running. Artifact in /app/FKS.dll'; sleep infinity"]
