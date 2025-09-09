@@ -19,7 +19,8 @@ services:
       - ./packages:/app/packages
     networks: [fks_net]
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:4900/health || dotnet --info >/dev/null 2>&1 || exit 1"]
+  # Fallback to process/runtime validation since no HTTP server is exposed yet
+      test: ["CMD-SHELL", "dotnet --info >/dev/null 2>&1 && echo ok || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
